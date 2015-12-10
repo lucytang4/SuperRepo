@@ -1,13 +1,13 @@
 /*
 Lucy Tang
 APCS1 pd5
-HW43--This or That
-2015-12-7
+HW45-Come Together
+2015-12-10
 */
 
 //skeleton file for class Binary
 
-public class Binary {
+public class Binary implements Comparable{
 
     private int _decNum;
     private String _binNum;
@@ -54,6 +54,9 @@ public class Binary {
     public String toString() { 
         return this._binNum;  
     }
+
+    //accessor
+    public int getDec(){ return _decNum;}
 
 
     /*=====================================
@@ -132,9 +135,24 @@ public class Binary {
       binToDecR("1110") -> 14
       =====================================*/
     public static int binToDecR( String s ) {
+	/*
 	int num = Integer.parseInt(s.substring(0,1));
-	if (s.length() > 0) return num + binToDecR(s.substring(1)); //add on right
+	if (s.length() > 0)
+	    return (num * Math.pow(2,s.length()-1)) + binToDecR(s.substring(1)); //add on right
 	return 0;
+    }
+	*/
+	int exp = s.length() - 1;
+	//base case: If length of string has reached 0, terminate recursion.
+	if (s.length() == 0){
+	  return 0;
+	}
+	//recursion: add the numbers (decimal representation of hexadecimal) * (16^digit location of hexadecimal - 1), and hexToDecR of the next digit to the stack.
+	else{
+	    int num = Integer.parseInt(s.substring(0,1));
+	    num *= Math.pow(2,exp);
+	    return num + binToDecR(s.substring(1));
+	}
     }
 
 
@@ -144,12 +162,9 @@ public class Binary {
       post: Returns true if this and other are aliases (pointers to same 
       Object), or if this and other represent equal binary values
       =============================================*/
-    public boolean equals( Object other ) { 
-	boolean retVal = this == (Binary)other; //check if aliasing
-	if (!retVal)
-	    retVal = (Binary)other instanceof Binary
-		&& this.compareTo((Binary)other) == 0;
-	return retVal;
+    public boolean equals( Object other ) {
+	if (this == other){return true;}
+	return this.compareTo(other) == 0; 
     }
 
 
@@ -160,9 +175,24 @@ public class Binary {
       negative integer if this<input, positive integer otherwise
       =============================================*/
     public int compareTo( Object other ) {
-        if (this._decNum > ((Binary)other)._decNum) return 1;
-	if (this._decNum < ((Binary)other)._decNum) return -1;
-	return 0;
+	if (other == null)
+	    throw new NullPointerException("input is a null");
+	if (!(other instanceof Binary))
+	    throw new ClassCastException("input not a Binary");
+	Rational temp1 = new Rational(_decNum,1);
+	Rational temp2 = null;
+	if (other instanceof Rational)
+	    temp2 = (Rational)other;
+	if (other instanceof Binary)
+	    temp2 = new Rational(((Binary)other).getDec(),1);
+	if (other instanceof Hexadecimal)
+	    temp2 = new Rational(((Hexadecimal)other).getDec(),1);
+        //if (this._decNum > ((Binary)other)._decNum) return 1;
+	//if (this._decNum < ((Binary)other)._decNum) return -1;
+	//if (this._decNum > ((Binary)other).getDec()) return 1;
+	//if (this._decNum < ((Binary)other).getDec()) return -1;
+	//return 0;
+	return temp1.compareTo(temp2);
     }
 
 

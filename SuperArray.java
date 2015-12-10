@@ -1,8 +1,8 @@
 /*
-Team Right Hand Drive-- Lucy Tang, Alan Chen
+Lucy Tang
 APCS1 pd5
-HW42--Array of Titanium
-2015-12-6
+HW45-Come Together
+2015-12-10
 */
 
 /*****************************
@@ -16,23 +16,23 @@ HW42--Array of Titanium
  *  ability to print meaningfully
  *****************************/
 
-public class SuperArray implements ListInt{
+public class SuperArray{
 
-		//~~~~~INSTANCE VARS~~~~~
-		//underlying container, or "core" of this data structure:
-    private int[] _data;
+    //~~~~~INSTANCE VARS~~~~~
+    //underlying container, or "core" of this data structure:
+    private Comparable[] _data;
 
-		//position of last meaningful value
+    //position of last meaningful value
     private int _lastPos;
 
-		//size of this instance of SuperArray
-	private int _size;
+    //size of this instance of SuperArray
+    private int _size;
 
 		
-		//~~~~~METHODS~~~~~
+    //~~~~~METHODS~~~~~
     //default constructor â€“ initializes 10-item array
     public SuperArray() {
-        _data = new int[10];
+        _data = new Comparable[10];
         _size = 0;
         _lastPos = -1;
     }
@@ -50,29 +50,29 @@ public class SuperArray implements ListInt{
 		
     //double capacity of this SuperArray
     private void expand() {
-        int[] temp = new int[_size*2];
+        Comparable[] temp = new Comparable[_size*2];
         for (int x = 0; x<_size ; x++) temp[x] = get(x);
         _data = temp;
     }
 
 		
     //accessor -- return value at specified index
-    public int get( int index ) { 
+    public Comparable get( int index ) { 
         return _data[index];
     }
 
 		
     //mutator -- set value at index to newVal, 
     //           return old value at index
-    public int set( int index, int newVal ) { 
-        int temp = _data[index];
+    public Comparable set( int index, Comparable newVal ) { 
+        Comparable temp = _data[index];
         _data[index] = newVal;
         return temp;
     }
     
-     // ~~~~~~~~~~~~~~ PHASE II ~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~ PHASE II ~~~~~~~~~~~~~~
     //adds an item after the last item
-    public void add (int newVal) {
+    public void add (Comparable newVal) {
         _lastPos+=1;
         _size+=1;
         if(_lastPos != _data.length) _data[_lastPos] = newVal;
@@ -84,7 +84,7 @@ public class SuperArray implements ListInt{
     //inserts an item at index
     //shifts existing elements to the right
     //FAILS for index >= _size
-    public void add( int index, int newVal ) { 
+    public void add( int index, Comparable newVal ) { 
         if(index > _data.length) {
             System.out.println("input a valid index u fool");
             System.out.println("nothing changed");
@@ -104,7 +104,6 @@ public class SuperArray implements ListInt{
     public void remove( int index ) { 
         _size -= 1;
         for (int i = index; i < _lastPos; i++) _data[i] = _data[i + 1];
-        _data[_lastPos] = 0;
         _lastPos -= 1;
     }
 
@@ -114,28 +113,94 @@ public class SuperArray implements ListInt{
         return _size;
     }
 
-		//main method for testing
-	public static void main( String[] args ) {
-		ListInt test = new SuperArray();
+    //index of first occurence of target, iterative
+    public int linSearch(Comparable other){
+	for (int pos = 0; pos < _data.length; pos++){
+	    if (_data[pos].equals(other)){
+		return pos;
+	    }
+	}
+	return -1;
+    }
 
-		System.out.println(((SuperArray)test)._size); // 0
-		System.out.println(((SuperArray)test)._lastPos); // -1
-		test.add(3);
-		test.add(3);
-		test.add(3);
-		test.add(1,5);
-		test.add(11,5);
-		System.out.println(test); // [3,5,3,3]
-		System.out.println(((SuperArray)test)._size); // 4
-		System.out.println(((SuperArray)test)._lastPos); // 3
-		test.remove(1);
-		System.out.println(test); //[3,3,3]
-		System.out.println(((SuperArray)test)._size); //3
-		System.out.println(((SuperArray)test)._lastPos); //2
-		System.out.println(test.size()); //3
-		test.set(1,10);
-		System.out.println(test); //[3,10,3]
+    //sees if _data is sorted
+    public boolean isSorted(){
+	for (int i = 0; i <  _data.length; i++){
+	    if (_data[i].compareTo(_data[i+1]) > 0) return false;
+	}
+	return true;
+    }
+	    /*
+	    //use Rational
+	    Rational temp1 = null;
+	    Rational temp2 = null;
+	    if (_data[i] instanceof Rational){
+		if (_data[i+1] instanceof Rational && _data[i].compareTo(_data[i+1]) > 0) return false;
+		else{
+		    temp1 = (Rational)_data[i];
+		    if (_data[i+1] instanceof Binary)
+			temp2 = new Rational(((Binary)_data[i+1]).getDec(),1);
+		    if (_data[i+1] instanceof Hexadecimal)
+			temp2 = new Rational(((Hexadecimal)_data[i+1]).getDec(),1);
+		    //if (temp1.compareTo(temp2) > 0) return false;
+		}
+	    }
+	    if (_data[i] instanceof Binary){
+		if (_data[i+1] instanceof Binary && _data[i].compareTo(_data[i+1]) > 0) return false;
+		else{
+		    temp1 = new Rational(((Binary)_data[i]).getDec(),1);
+		    if (_data[i+1] instanceof Rational)
+			temp2 = (Rational)_data[i+1];
+		    if (_data[i+1] instanceof Hexadecimal)
+			temp2 = new Rational(((Hexadecimal)_data[i+1]).getDec(),1);
+		    //if (temp1.compareTo(temp2) > 0) return false;
+		}
+	    }
+	    if (_data[i] instanceof Hexadecimal){
+		if (_data[i+1] instanceof Hexadecimal && _data[i].compareTo(_data[i+1]) > 0) return false;
+		else{
+		    temp1 = new Rational(((Hexadecimal)_data[i]).getDec(),1);
+		    if (_data[i+1] instanceof Binary)
+			temp2 = new Rational(((Binary)_data[i+1]).getDec(),1);
+		    if (_data[i+1] instanceof Rational)
+			temp2 = (Rational)_data[i+1];
+		    //if (temp1.compareTo(temp2) > 0) return false;
+		}
+	    }
+	    if (temp1.compareTo(temp2) > 0) return false;
+	}
+	return true;
+    }
+    */
+	    
+
+    //main method for testing
+    public static void main( String[] args ) {
+
+	SuperArray a = new SuperArray();
+	//a._data[0] = new Rational(2,3);
+	//a._data[1] = new Binary(2);
+	//a._data[2] = new Rational(5,2);
+	//a._data[3] = new Rational(7,2);
+	//a._data[4] = new Hexadecimal(16);
+
+	a.add(new Rational(2,3));
+	a.add(new Binary(2));
+	a.add(new Rational(5,2));
+	a.add(new Rational(7,2));
+	a.add(new Hexadecimal(16));
+
+	Rational b = new Rational(4,6);
+	Binary c = new Binary("10");
+	Hexadecimal d = new Hexadecimal("E");
+	
+	System.out.println(a.linSearch(b)); //should be 0
+	System.out.println(a.linSearch(c)); //should be 1
+	System.out.println(a.linSearch(d)); //should be 4
+	System.out.println(a.isSorted()); //should be true
+
+
 		
-	}//end main
+    }//end main
 		
 }//end class
